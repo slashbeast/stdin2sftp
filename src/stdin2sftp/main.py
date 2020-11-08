@@ -29,7 +29,7 @@ def process_args():
 
     optional.add_argument(
         '-p', '--port', action='store', type=str, required=False,
-        help="The username to be used when connecting to remote end."
+        help="Port on which SSH/SFTP listen."
     )
 
     args, extra_args = parser.parse_known_args()
