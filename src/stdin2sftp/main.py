@@ -81,26 +81,22 @@ def stdin2sftp(args):
     target = args.file_path
     target_tmp = "{}.__tmp_stdin2sftp__".format(target)
 
-    ssh_client = paramiko.SSHClient()
-    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    with paramiko.SSHClient() as ssh_client:
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-    einfo("Connecting to {} ...".format(config['hostname']))
-    ssh_client.connect(**config)
-    sftp_client = ssh_client.open_sftp()
+        einfo("Connecting to {} ...".format(config['hostname']))
+        ssh_client.connect(**config)
+        sftp_client = ssh_client.open_sftp()
 
-    einfo("Uploading {} ...".format(target))
-    sftp_client.putfo(sys.stdin.buffer, target_tmp)
+        einfo("Uploading {} ...".format(target))
+        sftp_client.putfo(sys.stdin.buffer, target_tmp)
 
-    try:
-        sftp_client.stat(target)
-        sftp_client.remove(target)
-    except IOError:
-        pass
+        try:
+            sftp_client.remove(target)
+        except IOError:
+            pass
 
-    sftp_client.rename(target_tmp, target)
-
-    sftp_client.close()
-    ssh_client.close()
+        sftp_client.rename(target_tmp, target)
 
     einfo('Done.')
 
