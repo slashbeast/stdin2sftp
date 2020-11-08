@@ -16,11 +16,20 @@ Make zero-copy snapshot of the Virtual Machine disk image::
 
 And upload it over the network, while adding compression to remote file::
 
-  zstd -6 < vm_1.qcow2_snapshot | stdin2sftp -u backupuser -H backuphost.example.com -f "/mnt/backups/vm_dumps/vm_1/$(date '+%Y-%m-%d_%H-%M-%S').qcow2.zstd"
+  zstd -6 < vm_1.qcow2_snapshot | \
+  stdin2sftp \
+    -u backupuser \
+    -H backuphost.example.com \
+    -f "/mnt/backups/vm_dumps/vm_1/$(date '+%Y-%m-%d_%H-%M-%S').qcow2.zstd"
 
 And if one is worried about saturating network link, an bandwidth limit can be applied with ``pv``. Since with reflink, the source disk image is not blocked regardless of how long the transfer takes::
 
-  zstd -6 < vm_1.qcow2_snapshot | pv -L 64M | stdin2sftp -u backupuser -H backuphost.example.com -f "/mnt/backups/vm_dumps/vm_1/$(date '+%Y-%m-%d_%H-%M-%S').qcow2.zstd"
+  zstd -6 < vm_1.qcow2_snapshot | \
+  pv -L 64M | \
+  stdin2sftp \
+    -u backupuser \
+    -H backuphost.example.com \
+    -f "/mnt/backups/vm_dumps/vm_1/$(date '+%Y-%m-%d_%H-%M-%S').qcow2.zstd"
 
 after which the snapshot can be discarded::
 
